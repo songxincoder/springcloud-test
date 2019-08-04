@@ -1,0 +1,44 @@
+server:
+  port: 6000
+spring:
+  application:
+    name: zuul
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+# localhost:6000/actuator/routes 上面配置，查看路由信息
+zuul:
+  ignored-services: '*'
+  routes:
+    api-provider:
+      path: /pro/**
+      url: http://localhost:9000
+      sensitive-headers:
+        custom-sensitive-headers: true
+    client: /client1/**
+  ignore-local-service: true
+
+# 如果禁用 eureka ribbon 自动配置支持，则手动添加 ribbon 配置,否则根据 service-id 在ribbon 中找不到对应的服务
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+  eureka:
+    enabled: true
+
+#client:
+#  ribbon:
+#    listOfServers : http://localhost:8000
